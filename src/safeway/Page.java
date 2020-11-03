@@ -19,6 +19,13 @@ class Page {
     /**
      * @return the max
      */
+    public Page(int max){
+        this.max = max;
+        this.llaves = new Nodo[max];
+        paginaPadre = null;
+    }
+    
+    
     
     public void put(int i, Nodo llave){
         this.getLlaves()[i]= llave;

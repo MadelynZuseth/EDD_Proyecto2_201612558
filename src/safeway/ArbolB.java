@@ -5,215 +5,180 @@
  */
 package safeway;
 
-public class ArbolB {
+public class ArbolB<T extends Comparable <T>, V>{
+    private int k;
+    private Page raiz;
+    
+    public ArbolB(int k){
+        this.k = k;
+        this.raiz = new Page(k);
+    }
+    
+    public void Insertar(T llave, V valor){
+        Nodo newNodo = new Nodo(llave, valor);
+        Nodo llavecentral = null;
+        if(this.raiz.get(0) == null){
+            this.raiz.put(0, newNodo);
+        }else if(this.raiz.get(0).getIzquierda() == null){
+            int lugarInsertado = -1;
+            Page nodo = this.raiz;
+            for(int i = 0; i < k; i++){
+                if(nodo.get(i)==null){
+                    nodo.put(i, newNodo);
+                    lugarInsertado = i;
+                }
+                if(lugarInsertado != -1){
+                    if(lugarInsertado == k-1){
+                        int midle = nodo.getMax()/2;
+                        llavecentral = nodo.get(midle);
+                        Page derecho = new Page(k);
+                        Page izquierdo = new Page(k);
+                        int indiceizquierdo = 0, indicederecho = 0;
+                        for (int j=0; j < nodo.getMax(); j++){
+                            if(nodo.get(j).compareTo(llavecentral.getKey())<0){
+                                izquierdo.put(indiceizquierdo, nodo.get(j));
+                                indiceizquierdo++;
+                                nodo.put(j, null);
+                            }else if(nodo.get(j).compareTo(llavecentral.getKey())>0){
+                                derecho.put(indicederecho, nodo.get(j));
+                                indicederecho++;
+                                nodo.put(j,null);
+                            }
+                        }
+                        nodo.put(midle,null);
+                        this.raiz = nodo;
+                        this.raiz.put(0, llavecentral);
+                        izquierdo.setPaginaPadre(this.raiz);
+                        derecho.setPaginaPadre(this.raiz);
+                        llavecentral.setIzquierda(izquierdo);
+                        llavecentral.setDerecha(derecho);
+                        break;
+                    }else{
+                        break;
+                    }
+                }
+            }
+        }else if(this.raiz.get(0).getIzquierda()!=null){
+            Page nodo = this.raiz;
+            while(nodo.get(0).getIzquierda()!=null){
+                int loop = 0;
+                for(int i=0; i < nodo.getMax(); i++){
+                    if(nodo.get(i)!=null){
+                        if(nodo.get(i).compareTo(newNodo.getKey())>0){
+                            nodo = nodo.get(i).getIzquierda();
+                            break;
+                        }
+                    }else {
+                        nodo = nodo.get(i -1).getDerecha();
+                        break;
+                    }
+                }
+                if(loop==nodo.getMax()){
+                    nodo = nodo.get(loop -1).getDerecha();
+                }
+            }
+            int indicecolocado = colocarNodo(nodo, newNodo);
+            if(indicecolocado == k-1){
+                while(nodo.getPaginaPadre()!= null){
+                    int indicemedio = nodo.getMax() /2;
+                    llavecentral = nodo.get(indicemedio);
+                    Page izquierdo = new Page(k);
+                    Page derecho = new Page(k);
+                    int indiceizquierdo = 0, indicederecho = 0;
+                    for(int i=0; i<k; i++){
+                        if(nodo.get(i).compareTo(llavecentral.getKey())<0){
+                            izquierdo.put(indiceizquierdo,nodo.get(i));
+                            indiceizquierdo++;
+                            nodo.put(i, null);
+                        }else if(nodo.get(i).compareTo(llavecentral.getKey())>0){
+                            derecho.put(indicederecho, nodo.get(i));
+                            indicederecho++;
+                            nodo.put(i, null);
+                        }
+                    }
+                    nodo.put(indicemedio,null);
+                    llavecentral.setIzquierda(izquierdo);
+                    llavecentral.setDerecha(derecho);
+                    nodo = nodo.getPaginaPadre();
+                    izquierdo.setPaginaPadre(nodo);
+                    derecho.setPaginaPadre(nodo);
+                    for(int i=0; i< k; i++){
+                        if(izquierdo.get(i)!=null){
+                            if(izquierdo.get(i).getIzquierda()!=null){
+                                izquierdo.get(i).getIzquierda().setPaginaPadre(izquierdo);
+                            }
+                            if(izquierdo.get(i).getDerecha()!=null){
+                                izquierdo.get(i).getDerecha().setPaginaPadre(izquierdo);
+                            }
+                        }
+                    }
+                    for(int i = 0; i < k; i++){
+                        if(derecho.get(i)!=null){
+                            if(derecho.get(i).getIzquierda()!=null){
+                                derecho.get(i).getIzquierda().setPaginaPadre(derecho);
+                            }
+                            if(derecho.get(i).getDerecha()!=null){
+                                derecho.get(i).getDerecha().setPaginaPadre(derecho);
+                            }
+                        }
+                    }
+                }
+                int lugarcolocado = colocarNodo(nodo, llavecentral);
+                if(lugarcolocado==k-1){
+                    if(nodo.getPaginaPadre()==null){
+                        int indicecentralraiz = k /2 ;
+                        Nodo llavecentralraiz = nodo.get(indicecentralraiz);
+                        Page izquierdaraiz = new Page(k);
+                        Page derecharazi = new Page(k);
+                        int indicederechoraiz = 0, indiceizquierdoraiz = 0;
+                        for(int i=0; i <k; i++){
+                            if(nodo.get(i).compareTo(llavecentralraiz.getKey())<0){
+                                izquierdaraiz.put(indiceizquierdoraiz, nodo.get(i));
+                                indiceizquierdoraiz++;
+                                nodo.put(i,null);
+                            }else if(nodo.get(i).compareTo(llavecentralraiz.getKey())>0){
+                              derecharazi.put(indicederechoraiz, nodo.get(i));
+                                indicederechoraiz++;
+                                nodo.put(i,null);
+                            }
+                        }
+                        nodo.put(indicecentralraiz,null);
+                        nodo.put(0, llavecentralraiz);
+                        for(int i=0; i<k; i++){
+                            if(izquierdaraiz.get(i)!=null){
+                                izquierdaraiz.get(i).getIzquierda().setPaginaPadre(izquierdaraiz);
+                                izquierdaraiz.get(i).getDerecha().setPaginaPadre(izquierdaraiz);
+                            }
+                        }
+                        for(int i=0;i<k; i++){
+                            if(derecharazi.get(i)!=null){
+                                derecharazi.get(i).getIzquierda().setPaginaPadre(derecharazi);
+                                derecharazi.get(i).getDerecha().setPaginaPadre(derecharazi);
+                                
+                                    })
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private int colocarNodo(Page nodo, Nodo newNodo){
+        int index = -1;
+        for(int i=0; i< k; i++){
+            if(nodo.get(i) == null){
+                boolean placed = false;
+                for(int j=i-1;j>=0; j--){
+                    if(nodo.get(j).compareTo(newNodo.getKey())>0){
+                        nodo.put(j+1, nodo.get(j));
+                    }else{
+                        
+                    }
+                }
+            }
+        }
+    }
+              
  
-    Nodo root;
-    int t;
+
     
-
-    //Constructor
-    public ArbolB(int t) {
-        this.t = t;
-        root = new Nodo(t);
-    }
-
-    public int buscarClaveMayor() {
-        int claveMaxima = getClaveMayor(this.root);
-
-        return claveMaxima;
-    }
-
-    private int getClaveMayor(Nodo current) {
-        if (current == null) {
-            return 0;//Si es cero no existe
-        }
-
-        //Mientras no sea una hoja
-        while (!current.leaf) {
-            //Se accede al hijo mas a la derecha
-            current = current.child[current.n];
-        }
-
-        return claveMayorPorNodo(current);
-    }
-
-    private int claveMayorPorNodo(Nodo current) {
-        //Devuelve el valor mayor, el que esta mas a la derecha
-        return current.key[current.n - 1];
-    }
-
-    public void mostrarClavesNodoMinimo() {
-        Nodo temp = buscarNodoMinimo(root);
-
-        if (temp == null) {
-            System.out.println("Sin minimo");
-        } else {
-            temp.imprimir();
-        }
-    }
-
-    public Nodo buscarNodoMinimo(Nodo nodoActual) {
-        if (root == null) {
-            return null;
-        }
-
-        Nodo aux = root;
-
-        //Mientras no sea una hoja
-        while (!aux.leaf) {
-            //Se accede al primer hijo
-            aux = aux.child[0];
-        }
-
-        //Devuelve el nodo menor, el que esta mas a la izquierda
-        return aux;
-    }
-
-    //Busca el valor ingresado y muestra el contenido del nodo que contiene el valor
-    public void buscarNodoPorClave(int num) {
-        Nodo temp = search(root, num);
-
-        if (temp == null) {
-            System.out.println("No se ha encontrado un nodo con el valor ingresado");
-        } else {
-            print(temp);
-        }
-    }
-
-    //Search
-    private Nodo search(Nodo actual, int key) {
-        int i = 0;//se empieza a buscar siempre en la primera posicion
-
-        //Incrementa el indice mientras el valor de la clave del nodo sea menor
-        while (i < actual.n && key > actual.key[i]) {
-            i++;
-        }
-
-        //Si la clave es igual, entonces retornamos el nodo
-        if (i < actual.n && key == actual.key[i]) {
-            return actual;
-        }
-
-        //Si llegamos hasta aqui, entonces hay que buscar los hijos
-        //Se revisa primero si tiene hijos
-        if (actual.leaf) {
-            return null;
-        } else {
-            //Si tiene hijos, hace una llamada recursiva
-            return search(actual.child[i], key);
-        }
-    }
-
-    public void insertar(int key) {
-        Nodo r = root;
-
-        //Si el nodo esta lleno lo debe separar antes de insertar
-        if (r.n == ((2 * t) - 1)) {
-            Nodo s = new Nodo(t);
-            root = s;
-            s.leaf = false;
-            s.n = 0;
-            s.child[0] = r;
-            split(s, 0, r);
-            nonFullInsert(s, key);
-        } else {
-            nonFullInsert(r, key);
-        }
-    }
-    
-    // Caso cuando la raiz se divide
-    // x =          | | | | | |
-    //             /
-    //      |10|20|30|40|50|
-    // i = 0
-    // y = |10|20|30|40|50|
-    private void split(Nodo x, int i, Nodo y) {
-        //Nodo temporal que sera el hijo i + 1 de x
-        Nodo z = new Nodo(t);
-        z.leaf = y.leaf;
-        z.n = (t - 1);
-
-        //Copia las ultimas (t - 1) claves del nodo y al inicio del nodo z      // z = |40|50| | | |
-        for (int j = 0; j < (t - 1); j++) {
-            z.key[j] = y.key[(j + t)];
-        }
-
-        //Si no es hoja hay que reasignar los nodos hijos
-        if (!y.leaf) {
-            for (int k = 0; k < t; k++) {
-                z.child[k] = y.child[(k + t)];
-            }
-        }
-
-        //nuevo tamanio de y                                                    // x =            | | | | | |
-        y.n = (t - 1);                                                          //               /   \
-                                                                                //  |10|20| | | |
-        //Mueve los hijos de x para darle espacio a z
-        for (int j = x.n; j > i; j--) {
-            x.child[(j + 1)] = x.child[j];
-        }
-        //Reasigna el hijo (i+1) de x                                           // x =            | | | | | |
-        x.child[(i + 1)] = z;                                                   //               /   \
-                                                                                //  |10|20| | | |     |40|50| | | |
-        //Mueve las claves de x
-        for (int j = x.n; j > i; j--) {
-            x.key[(j + 1)] = x.key[j];
-        }
-
-        //Agrega la clave situada en la mediana                                 // x =            |30| | | | |
-        x.key[i] = y.key[(t - 1)];                                              //               /    \
-        x.n++;                                                                  //  |10|20| | | |      |40|50| | | |
-    }
-
-    private void nonFullInsert(Nodo x, int key) {
-        //Si es una hoja
-        if (x.leaf) {
-            int i = x.n; //cantidad de valores del nodo
-            //busca la posicion i donde asignar el valor
-            while (i >= 1 && key < x.key[i - 1]) {
-                x.key[i] = x.key[i - 1];//Desplaza los valores mayores a key
-                i--;
-            }
-
-            x.key[i] = key;//asigna el valor al nodo
-            x.n++; //aumenta la cantidad de elementos del nodo
-        } else {
-            int j = 0;
-            //Busca la posicion del hijo
-            while (j < x.n && key > x.key[j]) {
-                j++;
-            }
-
-            //Si el nodo hijo esta lleno lo separa
-            if (x.child[j].n == (2 * t - 1)) {
-                split(x, j, x.child[j]);
-
-                if (key > x.key[j]) {
-                    j++;
-                }
-            }
-
-            nonFullInsert(x.child[j], key);
-        }
-    }
-
-    public void showBTree() {
-        print(root);
-    }
-
-    //Print en preorder
-    private void print(Nodo n) {
-        n.imprimir();
-
-        //Si no es hoja
-        if (!n.leaf) {
-            //recorre los nodos para saber si tiene hijos
-            for (int j = 0; j <= n.n; j++) {
-                if (n.child[j] != null) {
-                    System.out.println();
-                    print(n.child[j]);
-                }
-            }
-        }
-    }
-}
