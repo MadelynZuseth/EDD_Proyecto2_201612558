@@ -30,7 +30,7 @@ public class Nodo<T extends Comparable<T>, V> implements Comparable {
         T aux = (T) o;
         if(this.key.compareTo(aux)<0){
             return -1;
-        }else if (this.compareTo(aux)>0){
+        }else if (this.key.compareTo(aux)>0){
             return 1;
         }
         return 0;
