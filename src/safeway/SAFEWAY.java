@@ -15,10 +15,8 @@ public class SAFEWAY {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ArbolB <Integer, Integer> arbol = new ArbolB<>(5);
-        for(int i=0; i<=10;i++){
-            arbol.Insertar(i, i);
-        }
-        arbol.Graficar();
+        ArbolB arbol = new ArbolB();
+        arbol.Insertar(5,"Madelyn", "Mady", "madelyn.com","55158d8e",50121616,"(50,50)","58");
+        arbol.graficar();
     }
 }
