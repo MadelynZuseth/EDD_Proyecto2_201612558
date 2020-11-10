@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 
 
 public class ArbolB{
-   Nodo raiz;
+   public Nodo raiz;
    int numero = 0;
     public ArbolB(){
 
@@ -26,11 +26,12 @@ public class ArbolB{
            numero = numero +1;
            Nodo auxiliar = new Nodo(aux,1, numero, raiz);
            raiz = auxiliar;
-           raiz.sig1=null;
-           raiz.sig2=null;
-           raiz.sig3=null;
-           raiz.sig4=null;
-           raiz.sig5=null;
+           auxiliar.padre = raiz;
+           raiz.sig1 = null;
+           raiz.sig2 = null;
+           raiz.sig3 = null;
+           raiz.sig4 = null;
+           raiz.sig5 = null;
         }else{
            int posicion = 0;
            agregardatos(dato, raiz.N, raiz, posicion, raiz);
@@ -38,9 +39,11 @@ public class ArbolB{
     }
     
     public void agregardatos(Nodos dato, Nodos aux[], Nodo auxiliar, int posicion, Nodo padre){
+        
        if(posicion<4){ 
-            if(aux[posicion].getId_Usuario()< dato.getId_Usuario()){
-                if(posicion==0 && auxiliar.sig1!=null){
+          if(aux[posicion]!= null){
+            if(aux[posicion].getId_Usuario() < dato.getId_Usuario()){
+                    if(posicion==0 && auxiliar.sig1!=null){
                     padre = auxiliar;
                     auxiliar = auxiliar.sig1;
                 }else if(posicion==1 && auxiliar.sig2!=null){
@@ -53,44 +56,52 @@ public class ArbolB{
                     padre = auxiliar;
                     auxiliar = auxiliar.sig4;
                 }else if((((posicion==0 && auxiliar.sig1==null)||(posicion==1 && auxiliar.sig2==null))||(posicion==2 && auxiliar.sig3==null))||(posicion==3 && auxiliar.sig4==null)){
-                    if(auxiliar.claves<4){
-                        corriendoNodo(aux, posicion, dato, auxiliar);
-                        auxiliar.claves = auxiliar.claves + 1;
-                    }else if(auxiliar.claves==4){        
-                        separandoNodos(aux, posicion, dato, auxiliar);
-                    }
-                    
+                    posicion = posicion  + 1;
+                   // auxiliar.setClaves(auxiliar.getClaves() + 1);
+                    agregardatos(dato,aux,auxiliar,posicion,padre);
                 }
+            }else if(aux[posicion].getId_Usuario()> dato.getId_Usuario()){
+                if(auxiliar.claves < 4){
+                    corriendoNodo(aux, posicion, dato, auxiliar);
+                    auxiliar.setClaves(auxiliar.getClaves() + 1);
+                }else if(auxiliar.claves >= 4){        
+                    separandoNodos(posicion, dato, auxiliar);
+                }
+            }
+          }else{
+               if(auxiliar.claves < 4){
+                    corriendoNodo(aux, posicion, dato, auxiliar);
+                    auxiliar.setClaves(auxiliar.getClaves() + 1);
+               }else if(auxiliar.claves == 4){        
+                    separandoNodos(posicion, dato, auxiliar);
+                }  
             }
         }else if(posicion==4){
             if(auxiliar.sig5!=null){
                 padre = auxiliar;
                 auxiliar = auxiliar.sig1;
             }else{
-                separandoNodos(aux, posicion, dato, auxiliar);            
+                separandoNodos(posicion, dato, auxiliar);            
             }
         }
-        
+    
     }
     
     public void corriendoNodo(Nodos aux[], int posicion, Nodos dato, Nodo auxiliar){
         int pos = 0;
         int pos2 = 0;
         Nodos extra[] = new Nodos[5];
-        while(aux[pos]!=null){
+        while(auxiliar.N[pos2]!=null || posicion==pos2){
             if(posicion == pos){
-                extra[pos2]=dato;
-                pos2 = pos2 + 1;
+                extra[pos]=dato;
+                pos = pos + 1;
             }
-            extra[pos]=aux[pos2];
+            extra[pos]=auxiliar.N[pos2];
             pos = pos + 1;
             pos2= pos2 + 1;
         }
-        posicion = 0;
-        while(extra[posicion]!=null){
-            aux[posicion]=extra[posicion];
-            posicion = posicion + 1;
-        }
+        
+        
          if(posicion==0){
            if(auxiliar.sig4!=null){
                auxiliar.sig5 = auxiliar.sig4;
@@ -98,7 +109,7 @@ public class ArbolB{
            if(auxiliar.sig3!=null){
                auxiliar.sig4 = auxiliar.sig3;
            }
-           if(auxiliar.sig2!=null){
+           if(auxiliar.sig2 !=null){
                auxiliar.sig3 = auxiliar.sig2;
            }
            if(auxiliar.sig1!=null){
@@ -133,35 +144,44 @@ public class ArbolB{
             }
            auxiliar.sig4 = null;
         }
+        posicion = 0;
+        while(extra[posicion]!=null){
+            aux[posicion]=extra[posicion];
+            posicion = posicion + 1;
+        }
         
     }
     
-    public void separandoNodos(Nodos aux[], int posicion, Nodos dato, Nodo auxiliar){
+    public void separandoNodos(int posicion, Nodos dato,Nodo auxiliar){
         int pos = 0;
         int pos2 = 0;
         Nodo auxExtra = null;
         Nodos extra[] = new Nodos[5];
-        while(aux[pos]!=null){
-            if(posicion == pos){
-                extra[pos2]=dato;
-                pos2 = pos2 + 1;
+        
+        while(pos2 < 4){
+            if(auxiliar.N[pos2]!=null){
+                if(posicion == pos2){
+                    extra[pos]=dato;
+                    pos = pos + 1;
+                }
+                extra[pos]=auxiliar.N[pos2];
+                pos = pos + 1;
+                pos2= pos2 + 1;
             }
-            extra[pos]=aux[pos2];
-            pos = pos + 1;
-            pos2= pos2 + 1;
         }
+        
        if(posicion==0){
            if(auxiliar.sig5!=null){
-                auxExtra.sig5 = auxiliar.sig5;
+                auxExtra.sig5=auxiliar.sig5;
            }
            if(auxiliar.sig4!=null){
                auxiliar.sig5 = auxiliar.sig4;
            }
            if(auxiliar.sig3!=null){
-               auxiliar.sig4 = auxiliar.sig3;
+               auxiliar.sig4=auxiliar.sig3;
            }
            if(auxiliar.sig2!=null){
-               auxiliar.sig3 = auxiliar.sig2;
+               auxiliar.sig3=auxiliar.sig2;
            }
            if(auxiliar.sig1!=null){
                auxiliar.sig2 = auxiliar.sig1;
@@ -208,31 +228,37 @@ public class ArbolB{
         if(auxiliar.padre == raiz){
             Nodos extra2[] = new Nodos[4];
             Nodos extra3[] = new Nodos[4];
-            numero = numero + 1;
-            aux[0] = extra[0];
-            aux[1] = extra[1];
+            auxiliar.N[0] = extra[0];
+            auxiliar.N[1] = extra[1];
+            auxiliar.N[2] =  null;
+            auxiliar.N[3] = null;
             extra2[0] = extra[2];
             extra3[0] = extra[3];
             extra3[1] = extra[4];
+            numero = numero + 1;
             Nodo auxiliar2 = new Nodo(extra2,1, numero, auxiliar);
             raiz = auxiliar2;
-            auxiliar2.padre = raiz;
+            auxiliar2.padre=raiz;
+            numero = numero + 1;
             Nodo auxiliar3 = new Nodo(extra3, 2, numero, auxiliar2);
-            auxiliar3.sig1 = auxiliar.sig4;
-            auxiliar3.sig2 = auxiliar.sig5;
-            auxiliar2.sig1=auxiliar;
-            auxiliar2.sig2=auxiliar3;
             auxiliar3.sig1 = auxiliar.sig3;
             auxiliar3.sig2 = auxiliar.sig4;
             auxiliar3.sig3 = auxiliar.sig5;
+            auxiliar3.sig4 = null;
+            auxiliar3.sig5 = null;
+            auxiliar2.sig1 = auxiliar;
+            auxiliar2.sig2 = auxiliar3;
+            auxiliar2.sig3 = null;
+            auxiliar2.sig4 = null;
+            auxiliar2.sig5 = null;
             auxiliar.sig3 = null;
             auxiliar.sig4 = null;
             auxiliar.sig5 = null;
         }else{
             Nodos extra3[] = new Nodos[4];
             numero = numero + 1;
-            aux[0] = extra[0];
-            aux[1] = extra[1];
+            auxiliar.N[0] = extra[0];
+            auxiliar.N[1] = extra[1];
             extra3[0] = extra[3];
             extra3[1] = extra[4];
             Nodo auxiliar3 = new Nodo(extra3, 2, numero, auxiliar.padre);
@@ -245,12 +271,12 @@ public class ArbolB{
             auxiliar.sig4 = null;
             auxiliar.sig5 = null;
             dato = extra[2];
-            posicion = buscarPosicion(aux, 0, dato);
-            if(auxiliar.padre.claves<4){
+            posicion = buscarPosicion(auxiliar.N, 0, dato);
+            if(auxiliar.padre.getClaves() < 4){
                 corriendoNodo(auxiliar.padre.N, posicion, dato, auxiliar.padre);
-                auxiliar.padre.claves = auxiliar.claves + 1;
+                auxiliar.padre.setClaves(auxiliar.getClaves() + 1);
             }else if(auxiliar.padre.claves==4){        
-                separandoNodos(auxiliar.padre.N, posicion, dato, auxiliar.padre);
+                separandoNodos(posicion, dato, auxiliar.padre);
             }
         }
     }
@@ -293,26 +319,79 @@ public class ArbolB{
     }
     public void grafica(StringBuilder s){
         if(raiz!=null){
-            String nombre = String.valueOf(numero);
-            s.append(nombre).append("[label=\"<fo>");
-            int n = 0;
-            int f = 1;
-                while(n<4){
-                  if(raiz.N[n]!=null){
-                    s.append("|<f").append(f).append(">").append(raiz.N[n].getId_Usuario());
-                    f = f+1;
-                  }else{
-                    s.append("|<f").append(f).append(">").append("NULL");
-                    f = f+1; 
-                  }
-                    s.append("|<f").append(f).append(">");
-                    n = n+1;
-                    f = f+1;
-                  }
-                
-            s.append("\"];\n");
+            recorrerGraficar(s,raiz);
+            unirNodos(s,raiz);
         }else{
             s.append("nodo[label=\"no se han ingresado datos\"];");
         }
     }
+    
+    public void recorrerGraficar(StringBuilder s, Nodo auxiliar){
+        if(auxiliar!=null){
+            //String nombre = String.valueOf(auxiliar.numero);
+            s.append(auxiliar.numero).append("[label=\"<f0>");
+            int n = 0;
+            int f = 1;
+            while(n<4){
+                if(auxiliar.N[n]!=null){
+                    s.append("|<f").append(f).append(">").append(auxiliar.N[n].getId_Usuario());
+                    f = f+1;
+                }else{
+                    s.append("|<f").append(f).append(">").append("NULL");
+                    f = f+1; 
+                }
+                s.append("|<f").append(f).append(">");
+                f = f+1;
+                n = n+1;
+            }   
+            s.append("\"];\n");
+            if(auxiliar.sig1!=null){
+                recorrerGraficar(s, auxiliar.sig1);
+            }
+            if(auxiliar.sig2!=null){
+                recorrerGraficar(s, auxiliar.sig2);
+            }
+            if(auxiliar.sig3!=null){
+                recorrerGraficar(s, auxiliar.sig3);
+            }
+            if(auxiliar.sig4!=null){
+                recorrerGraficar(s, auxiliar.sig4);
+            }
+            if(auxiliar.sig5!=null){
+                recorrerGraficar(s, auxiliar.sig5);
+            }
+        }
+    }
+    
+    public void unirNodos(StringBuilder s,Nodo auxiliar){
+            if(auxiliar!=null){
+                 if(auxiliar.sig1!=null){
+                     s.append(auxiliar.numero).append(":f0").append("->").append(auxiliar.sig1.getNumero()).append(";");
+                 }if(auxiliar.sig2!=null){
+                     s.append(auxiliar.numero).append(":f2").append("->").append(auxiliar.sig2.getNumero()).append(";");
+                 }if(auxiliar.sig3!=null){
+                     s.append(auxiliar.numero).append(":f4").append("->").append(auxiliar.sig3.getNumero()).append(";");
+                 }if(auxiliar.sig4!=null){
+                     s.append(auxiliar.numero).append(":f6").append("->").append(auxiliar.sig4.getNumero()).append(";");
+                 }if(auxiliar.sig5!=null){
+                     s.append(auxiliar.numero).append(":f8").append("->").append(auxiliar.sig5.getNumero()).append(";");
+                 }
+                }
+            if(auxiliar.sig1!=null){
+                unirNodos(s, auxiliar.sig1);
+            }
+            if(auxiliar.sig2!=null){
+                unirNodos(s, auxiliar.sig2);
+            }
+            if(auxiliar.sig3!=null){
+                unirNodos(s, auxiliar.sig3);
+            }
+            if(auxiliar.sig4!=null){
+                unirNodos(s, auxiliar.sig4);
+            }
+            if(auxiliar.sig5!=null){
+                unirNodos(s, auxiliar.sig5);
+            }
+    } 
 }
+
