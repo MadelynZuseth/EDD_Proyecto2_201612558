@@ -12,14 +12,16 @@ public class Nodo{
     
     Nodos N[] = new Nodos[4];
     int claves;
-    Nodos siguiente1;
-    Nodos siguiente2;
-    Nodos siguiente3;
-    Nodos siguiente4;
-    Nodos siguiente5;
+    Nodo padre;
+    Nodo sig1;
+    Nodo sig2;
+    Nodo sig3;
+    Nodo sig4;
+    Nodo sig5;
     
-    public Nodo(Nodos N[], int claves, int numero){
+    public Nodo(Nodos N[], int claves, int numero, Nodo padre){
        this.claves = claves;
        this.N = N;
+       this.padre = padre;
     }
 }

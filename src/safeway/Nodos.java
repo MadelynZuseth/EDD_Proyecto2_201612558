@@ -21,6 +21,8 @@ public class Nodos {
     private String latitud;
     private String longitud;
     private Nodos Arrays[];
+    Nodos derecha;
+    Nodos izquierda;
      
     public Nodos(int id_Usuario_, String nombre_, String usuario_, String correo_, String contraseña_, int telefono_, String latitud_, String longitud_){
         id_Usuario = id_Usuario_;
@@ -32,6 +34,8 @@ public class Nodos {
         latitud = latitud_;
         longitud = longitud_;
         Arrays= new Nodos[5];
+        derecha = null;
+        izquierda = null;
     }
 
     /**
